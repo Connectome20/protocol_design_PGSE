@@ -1,30 +1,36 @@
-%% Demonstration of b-value calculation with the consideration of rise time
-close all
-clc
+%% Demo 1: b-value calculation for trapzoidal pulsed-gradient
+% Reference: Ramos-Llorden, Lee, ..., Huang, Nature BME, 2025
+% Author: Hong-Hsi Lee (0000-0002-3663-6559)
 
-G = 500;            % gradient strength, mT/m
-S = 600;            % slew rate, T/m/s
-g = G/40*0.0107;    % Larmor gradient strength, 1/um/ms
+clear
+restoredefaultpath
+filePath = matlab.desktop.editor.getActiveFilename;
+root = fileparts(filePath);
+addpath(genpath(fullfile(root,'lib')));
+
+G = 500;            % gradient strength (G), mT/m
+S = 600;            % slew rate (S), T/m/s
+g = G/40*0.0107;    % Larmor gradient strength (gamma*G), 1/um/ms
 t_rise = G/S;       % rise time, ms
-delta = 10;         % pulse width, ms
+delta = 10;         % pulse width (FWHM of trapzoidal pulse), ms
 Delta = 20;         % inter-pulse duration, ms
 
-% triangular pulse
+% When the pulse width is shorter than rise time, the pulse is triangular
 if delta < t_rise
     g = g * (delta/t_rise);
     t_rise = delta;
 end
 
-% analytical calculation of b-value
+% Analytical solution of b-value for trapzoidal pulsed-gradient sequence
 bval_analytical = g^2 * ( 1/30*t_rise^3 - 1/6*t_rise^2*delta +...
     t_rise*delta.^2 + 2/3*delta.^3 +...
     delta.^2.*(Delta-delta-t_rise) );
 
-% create the pulse gradient sequence
+% Create the pulse gradient sequence
 Nt = 1000;                      % # time points
-dt = (Delta+delta+t_rise)/Nt;   % time step
-tt = (1:Nt)*dt;                 % time
-gt = zeros(Nt,1);               % gradient sequence
+dt = (Delta+delta+t_rise)/Nt;   % time step, ms
+tt = (1:Nt)*dt;                 % time, ms
+gt = zeros(Nt,1);               % Larmor gradient waveform, 1/um/ms
 for i = 1:Nt
     ti = i*dt;
     if ti <= t_rise
@@ -44,24 +50,24 @@ for i = 1:Nt
     end
 end
 
-% q = integration of g * dt
+% Diffusion wavevector q(t) = integration of g(t) * dt, 1/um
 qt = cumsum(gt)*dt;
 
-% numerical calculation of b-value = integration of q^2 * dt
+% Numerical calculation of b-value = integration of q(t)^2 * dt, ms/um2
 bval_numerical = sum(qt.^2)*dt;
 
 figure('unit','inch','position',[0 0 10 5]);
 subplot(121);
-plot(tt, gt);
+plot(tt, gt, 'linewidth', 1);
 xlim([0 Delta + delta + t_rise]);
 xlabel('time, ms','interpreter','latex','fontsize',20);
-ylabel('Larmor gradient strength, 1/um/ms','interpreter','latex','fontsize',20);
+ylabel('Larmor gradient strength, ($\mu$m$\cdot$ms)$^{-1}$','interpreter','latex','fontsize',20);
 
 subplot(122);
-plot(tt, qt);
+plot(tt, qt, 'linewidth', 1);
 xlim([0 Delta + delta + t_rise]);
 xlabel('time, ms','interpreter','latex','fontsize',20);
-ylabel('q-vector, 1/um','interpreter','latex','fontsize',20);
+ylabel('$q$-vector, $\mu$m$^{-1}$','interpreter','latex','fontsize',20);
 title(sprintf('$b_{\\rm analytical}$=%.4f, $b_{\\rm numerical}$=%.4f',...
     bval_analytical, bval_numerical),'interpreter','latex','fontsize',20);
 
