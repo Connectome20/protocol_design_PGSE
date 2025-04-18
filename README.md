@@ -19,4 +19,4 @@ The code implements protocol design of PGSE developed in [Gabriel Ramos-Llorden,
 * [Susie Y Huang]()
 
 ## License
-This project is licensed under the [LICENSE](https://github.com/).
+This project is licensed under the [LICENSE](https://github.com/Connectome20/protocol_design_PGSE/blob/main/LICENSE).
