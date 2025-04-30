@@ -1,5 +1,7 @@
 # Protocol design of PGSE
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.15312803.svg)](https://doi.org/10.5281/zenodo.15312803)
+
 The code implements protocol design of PGSE developed in [Gabriel Ramos-Llorden, Hong-Hsi Lee, ..., Susie Y Huang, Nature Biomedical Engineering, 2025](), helping to decide the shortest TE for the given b-value.
 
 * **Demo 1, b-value for trapzoidal pulse-gradient sequence**
