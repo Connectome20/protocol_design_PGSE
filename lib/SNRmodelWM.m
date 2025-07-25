@@ -5,14 +5,14 @@ function SNR = SNRmodelWM(f, T2, TE, Nx, PF, GRAPPA, esp, b, Da)
 % Nx: # kx in each line
 % PF: partial fourier factor
 % GRAPPA: GRAPPA acceleration factor
-% esp: echo spacing, ms
+% esp: echo spacing or ADC duration for each kx line, ms
 %
 % SNR: signal-to-noise ratio
 %
 % Author: Hong-Hsi Lee, HLEE84@mgh.harvard.edu
 
 Ny = Nx*PF/GRAPPA;
-BW = 1000/esp*Ny;
+BW = 1000/esp*Nx;
 DWI = sqrt(pi/4/b/Da)*erf(sqrt(b*Da));
 SNR = f*exp(-TE/T2) * DWI *sqrt(Nx*Ny)/sqrt(BW);
 SNR = sum(SNR(:));
